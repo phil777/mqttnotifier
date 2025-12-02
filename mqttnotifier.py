@@ -57,7 +57,7 @@ class Notifier:
 
     def notify(self, title, body):
 
-        log.debug(f"Notif title={title} body={body}")
+        log.debug(f"Notify with title=[{title}] body=[{body}]")
 
         try:
             # Send notification
@@ -142,7 +142,6 @@ class Notifier:
     def on_message(self, client, userdata, msg):
         topic = msg.topic
         payload = msg.payload.decode('utf-8', errors='ignore')
-        log.debug(f"Received {msg}")
         log.debug(f"Received {topic}: {payload}")
 
         # Parse message if it's JSON
