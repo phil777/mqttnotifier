@@ -131,24 +131,11 @@ class Notifier:
             log.error("Unexpected disconnection (code {rc})")
 
     def find_format(self, topic):
-        t = topic
-        while True:
-            log.debug(f"Trying to find format for {t}")
-            if t in self.topics:
+        for t in self.topics:
+            log.debug(f"matching [{topic}] as [{t}]")
+            if mqtt.topic_matches_sub(t, topic):
                 return self.topics[t]
-            elif t.endswith("/"):
-                if t+"#" in self.topics:
-                    return self.topics[t+"#"]
-                t = t[:-1]
-            else:
-                if not t:
-                    if "#" in self.topics:
-                        return self.topics["#"]
-                    raise KeyError(topic)
-                if (p := t.rfind("/")) >= 0:
-                    t = topic[:p+1]
-                else:
-                    t = ""
+        raise KeyError(topic)
 
     def on_message(self, client, userdata, msg):
         topic = msg.topic
