@@ -32,6 +32,7 @@ BACK_OFF_CUTOFF = 300 # 5min
 DEFAULT_FORMAT = {
     "title": "{{title}}",
     "body": "{{body}}",
+    "icon": "",
 }
 
 NOTIFICATION_DURATION = 15
@@ -42,14 +43,15 @@ class Notifier:
         self.__dict__.update(options.__dict__)
         self.client = None
         self.back_off = BACK_OFF
-    def notify(self, title, body):
 
-        log.debug(f"Notify with title=[{title}] body=[{body}]")
+    def notify(self, title, body, icon=""):
+
+        log.debug(f"Notify with title=[{title}] body=[{body}] icon=[{icon}]")
         if self.test:
             log.debug("TEST MODE: does not notify")
             return
 
-        n = notify2.Notification(title, body)
+        n = notify2.Notification(title, body, icon)
         n.show()
 
         log.debug(f"Notification sent [{title}], title=[{body}]")
@@ -130,8 +132,9 @@ class Notifier:
         log.debug(f"Using format {fmt}")
         rtitle = jinja2.Template(fmt["title"]).render(title=title, topic=topic, body=body)
         rbody = jinja2.Template(fmt["body"]).render(title=title, topic=topic, body=body)
+        ricon = jinja2.Template(fmt["icon"]).render(title=title, topic=topic, body=body)
 
-        self.notify(rtitle, rbody)
+        self.notify(rtitle, rbody, ricon)
         log.debug(f"Notification sent for topic [{topic}]")
 
 
