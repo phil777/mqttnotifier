@@ -26,6 +26,7 @@ keywords = ["mqtt", "dbus", "notifications", "desktop"]
 #
 dependencies = [
     "python-daemon",
+    "notify2",
     "toml",
     "jinja2",
     "paho-mqtt>=1.6.0",

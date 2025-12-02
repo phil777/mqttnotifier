@@ -3,8 +3,6 @@
 import json
 import os
 import paho.mqtt.client as mqtt
-from dbus import SessionBus, Interface
-from dbus.exceptions import DBusException
 import sys
 import signal
 import argparse
@@ -13,7 +11,7 @@ import time
 import contextlib
 import daemon
 import jinja2
-
+import notify2
 import logging, logging.handlers
 
 APP_NAME="mqttnotifier"
@@ -44,21 +42,6 @@ class Notifier:
         self.__dict__.update(options.__dict__)
         self.client = None
         self.back_off = BACK_OFF
-        self.connect_dbus()
-
-    def connect_dbus(self):
-        # Connect to dbus
-        self.bus = SessionBus()
-        notify_obj = self.bus.get_object(
-            'org.freedesktop.Notifications',
-            '/org/freedesktop/Notifications'
-        )
-        self.notify_interface = Interface(
-            notify_obj,
-            'org.freedesktop.Notifications'
-        )
-        log.info("Connected to D-Bus notification interface.")
-
     def notify(self, title, body):
 
         log.debug(f"Notify with title=[{title}] body=[{body}]")
@@ -66,43 +49,15 @@ class Notifier:
             log.debug("TEST MODE: does not notify")
             return
 
-        try:
-            # Send notification
-            # Parameters: app_name, replaces_id, app_icon, title, body, actions, hints, timeout
-            while True:
-                try:
-                    self.notify_interface.Notify(
-                        APP_NAME,
-                        0,  # replaces_id (0 = don't replace)
-                        "",  # app_icon
-                        title,
-                        body,
-                        [],  # actions
-                        {},  # hints
-                        self.notification_duration*1000 # in ms
-                    )
-#                    self.notify_interface.Notify(APP_NAME, title, body, app_icon = "", actions = [], hints = {},
-#                                                 timeout = self.notification_duration*1000)  # in ms
-                except DBusException as e:
-                     if "ServiceUnknown" in str(e):
-                         log.warning("Notification service disconnected, attempting to reconnect...")
-                         time.sleep(self.back_off)
-                         self.back_off = 1 if not self.back_off else min(self.back_off*BACK_OFF_PROGRESSION, BACK_OFF_CUTOFF)
-                         self.connect_dbus()
-                     else:
-                         raise
-                else:
-                    break
+        n = notify2.Notification(title, body)
+        n.show()
 
-            self.back_off = BACK_OFF
-            log.debug(f"Notification sent [{title}], title=[{body}]")
-
-        except DBusException as e:
-            log.error(f"Failed to send notification: {e}")
-        except Exception as e:
-            raise
+        log.debug(f"Notification sent [{title}], title=[{body}]")
 
     def start(self):
+        # Initialize notify connection
+        notify2.init(APP_NAME)
+
         # Connect to mqtt
         self.client = mqtt.Client()
         self.client.on_connect = self.on_connect
