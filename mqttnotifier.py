@@ -15,7 +15,11 @@ import daemon
 import jinja2
 
 import logging, logging.handlers
-log = logging.getLogger("mqttnotify")
+
+APP_NAME="mqttnotifier"
+
+
+log = logging.getLogger(APP_NAME)
 NOTICE = 25
 logging.addLevelName(NOTICE, "NOTICE")
 
@@ -212,7 +216,7 @@ def main(*args):
 
     if options.daemon:
         handler = logging.handlers.SysLogHandler(address = '/dev/log', facility=logging.handlers.SysLogHandler.LOG_DAEMON)
-        formatter = logging.Formatter(fmt="mqttnotifier: %(levelname)-5s: %(message)s")
+        formatter = logging.Formatter(fmt=f"{APP_NAME}: %(levelname)-5s: %(message)s")
     else:
         handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter(fmt="%(asctime)s: %(levelname)-5s: %(message)s",
