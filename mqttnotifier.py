@@ -49,26 +49,6 @@ class Notifier:
         self.__dict__.update(options.__dict__)
         self.client = None
 
-    def notify(self, title, body, **hints):
-
-        log.debug(f"Notify with title=[{title}] body=[{body}] hints=[{' '.join(f'{k}={v}' for k,v in hints.items())}]")
-        if self.test:
-            log.debug("TEST MODE: does not notify")
-            return
-
-        notify2.init(APP_NAME)
-        n = notify2.Notification(title, body, hints.get("icon", ""))
-        for hint,set_hint in [ ("timeout", n.set_timeout),
-                               ("urgency", n.set_urgency),
-                               ("category", n.set_category) ]:
-            if (hint_val := hints.get(hint)) is not None:
-                set_hint(hint_val)
-
-        n.show()
-
-        log.debug(f"Notification sent [{title}], title=[{body}]")
-
-
     def start(self):
         # Initialize notify connection
         notify2.init(APP_NAME)
@@ -160,6 +140,22 @@ class Notifier:
 
         self.notify(rtitle, rbody, **hints)
         log.debug(f"Notification sent for topic [{topic}]")
+
+
+    def notify(self, title, body, **hints):
+        log.debug(f"Notify with title=[{title}] body=[{body}] hints=[{' '.join(f'{k}={v}' for k,v in hints.items())}]")
+        if self.test:
+            log.debug("TEST MODE: does not notify")
+            return
+        notify2.init(APP_NAME)
+        n = notify2.Notification(title, body, hints.get("icon", ""))
+        for hint,set_hint in [ ("timeout", n.set_timeout),
+                               ("urgency", n.set_urgency),
+                               ("category", n.set_category) ]:
+            if (hint_val := hints.get(hint)) is not None:
+                set_hint(hint_val)
+        n.show()
+        log.debug(f"Notification sent [{title}], title=[{body}]")
 
 
 
