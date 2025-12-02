@@ -1,0 +1,63 @@
+[project]
+name = "mqttnotofy"
+version = "0.1"
+description = "Forward MQTT messages to desktop notifications via D-Bus"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "GPLv2"}
+authors = [
+    {name = "pbi", email = "phil@secdev.org"}
+]
+keywords = ["mqtt", "dbus", "notifications", "desktop"]
+#classifiers = [
+#    "Development Status :: 4 - Beta",
+#    "Intended Audience :: Developers",
+#    "License :: OSI Approved :: MIT License",
+#    "Programming Language :: Python :: 3",
+#    "Programming Language :: Python :: 3.7",
+#    "Programming Language :: Python :: 3.8",
+#    "Programming Language :: Python :: 3.9",
+#    "Programming Language :: Python :: 3.10",
+#    "Programming Language :: Python :: 3.11",
+#    "Operating System :: POSIX :: Linux",
+#    "Topic :: Communications",
+#    "Topic :: System :: Monitoring",
+#]
+#
+dependencies = [
+    "toml",
+    "jinja2",
+    "paho-mqtt>=1.6.0",
+    "dbus-python>=1.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+]
+
+[project.scripts]
+mqtt-notify = "mqttnotify:main"
+
+[project.urls]
+Homepage = "https://github.com/secdev/mqttnotify"
+Repository = "https://github.com/secdev/mqttnotify"
+Issues = "https://github.com/yourusername/mqttnotify/issues"
+#
+#[build-system]
+#requires = ["setuptools>=45", "wheel"]
+#build-backend = "setuptools.build_meta"
+#
+#[tool.setuptools]
+#packages = ["mqtt_dbus_forwarder"]
+#
+#[tool.black]
+#line-length = 100
+#target-version = ['py37']
+#
+#[tool.pytest.ini_options]
+#testpaths = ["tests"]
+#python_files = "test_*.py"
+#
