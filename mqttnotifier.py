@@ -13,9 +13,10 @@ import contextlib
 import daemon
 import jinja2
 
-import logging
+import logging, logging.handlers
 log = logging.getLogger("mqttnotify")
-
+NOTICE = 25
+logging.addLevelName(NOTICE, "NOTICE")
 
 MQTT_HOST = "localhost"
 MQTT_PORT = 1883
@@ -204,7 +205,7 @@ def main(*args):
     options.topics |= { t[0]: dict(zip(["body","title"],t[1:]))
                         for t in options.topics_list }
 
-    options.log_level = max(1, 50+10*(options.quiet-options.verbose)) if not options.test else 1
+    options.log_level = max(1, 45+10*(options.quiet-options.verbose)) if not options.test else 1
 
     if options.daemon:
         handler = logging.handlers.SysLogHandler(address = '/dev/log', facility=logging.handlers.SysLogHandler.LOG_DAEMON)
