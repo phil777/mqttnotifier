@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import json
+import os
 import paho.mqtt.client as mqtt
 from dbus import SessionBus, Interface
 from dbus.exceptions import DBusException
@@ -224,23 +225,27 @@ def main(*args):
     ) if options.daemon else contextlib.nullcontext()
 
     with ctx:
-        if options.daemon:
-            log.info(f"Daemon started with PID {os.getpid()}")
-        while True:
-            try:
-                notifier = Notifier(options)
-                notifier.start()
-            except KeyboardInterrupt:
-                pass
-            except Exception as e:
-                log.exception(e, "Uncaught error")
-            finally:
+        try:
+            if options.daemon or 1:
+                log.log(NOTICE, f"Daemon started with PID {os.getpid()}")
+            while True:
                 try:
-                    notifier.stop()
-                except:
+                    notifier = Notifier(options)
+                    notifier.start()
+                except KeyboardInterrupt:
                     pass
-            if not options.daemon:
-                break
+                except Exception as e:
+                    log.exception(e, "Uncaught error")
+                finally:
+                    try:
+                        notifier.stop()
+                    except:
+                        pass
+                if not options.daemon:
+                    break
+        finally:
+            if options.daemon:
+                log.log(NOTICE, f"Daemon stopped (PID {os.getpid()})")
 
 
 if __name__ == "__main__":
