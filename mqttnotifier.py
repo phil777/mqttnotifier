@@ -241,7 +241,7 @@ def main(*args):
                 except KeyboardInterrupt:
                     pass
                 except Exception as e:
-                    log.exception(e, "Uncaught error")
+                    log.exception("Uncaught error")
                 finally:
                     try:
                         notifier.stop()
