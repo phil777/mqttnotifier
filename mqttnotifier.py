@@ -58,6 +58,9 @@ class Notifier:
     def notify(self, title, body):
 
         log.debug(f"Notify with title=[{title}] body=[{body}]")
+        if self.test:
+            log.debug("TEST MODE: does not notify")
+            return
 
         try:
             # Send notification
