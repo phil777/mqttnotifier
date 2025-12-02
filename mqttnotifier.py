@@ -25,10 +25,6 @@ MQTT_HOST = "localhost"
 MQTT_PORT = 1883
 APP_NAME = "mqtt"
 
-BACK_OFF = 0 # starting at 0s
-BACK_OFF_PROGRESSION = 1.5
-BACK_OFF_CUTOFF = 300 # 5min
-
 DEFAULT_FORMAT = {
     "title": "{{title}}",
     "body": "{{body}}",
@@ -52,7 +48,6 @@ class Notifier:
     def __init__(self, options):
         self.__dict__.update(options.__dict__)
         self.client = None
-        self.back_off = BACK_OFF
 
     def notify(self, title, body, **hints):
 
