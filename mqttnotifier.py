@@ -164,7 +164,7 @@ class Notifier:
 
         fmt = DEFAULT_FORMAT | fmt
 
-        log.debug(f"Found format {fmt}")
+        log.debug(f"Using format {fmt}")
         rtitle = jinja2.Template(fmt["title"]).render(title=title, topic=topic, body=body)
         rbody = jinja2.Template(fmt["body"]).render(title=title, topic=topic, body=body)
 
