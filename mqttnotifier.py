@@ -61,6 +61,7 @@ class Notifier:
             log.debug("TEST MODE: does not notify")
             return
 
+        notify2.init(APP_NAME)
         n = notify2.Notification(title, body, hints.get("icon", ""))
         for hint,set_hint in [ ("timeout", n.set_timeout),
                                ("urgency", n.set_urgency),
