@@ -171,8 +171,8 @@ class Notifier:
 
         try:
             fmt = self.find_format(topic)
-        except:
-            log.warning("Format for topic [{topic}] not found! Internal bug.")
+        except KeyError:
+            log.warning(f"Format for topic [{topic}] not found! Internal bug.")
             fmt = {}
 
         fmt = DEFAULT_FORMAT | fmt
