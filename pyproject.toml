@@ -44,9 +44,9 @@ dev = [
 mqttnotifier = "mqttnotifier:main"
 
 [project.urls]
-Homepage = "https://github.com/secdev/mqttnotify"
-Repository = "https://github.com/secdev/mqttnotify"
-Issues = "https://github.com/yourusername/mqttnotify/issues"
+Homepage = "https://github.com/phil777/mqttnotifier"
+Repository = "https://github.com/phil777/mqttnotifier"
+Issues = "https://github.com/phil777/mqttnotifier/issues"
 #
 #[build-system]
 #requires = ["setuptools>=45", "wheel"]
