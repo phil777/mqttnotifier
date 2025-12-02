@@ -33,6 +33,16 @@ DEFAULT_FORMAT = {
     "title": "{{title}}",
     "body": "{{body}}",
     "icon": "",
+    "urgency": "normal",
+    "muted": False,
+    "timeout": 5,
+    "category": None,
+}
+
+URGENCY_LEVEL = {
+    "low": notify2.URGENCY_LOW,
+    "normal": notify2.URGENCY_NORMAL,
+    "critical": notify2.URGENCY_CRITICAL,
 }
 
 NOTIFICATION_DURATION = 15
@@ -44,17 +54,24 @@ class Notifier:
         self.client = None
         self.back_off = BACK_OFF
 
-    def notify(self, title, body, icon=""):
+    def notify(self, title, body, **hints):
 
-        log.debug(f"Notify with title=[{title}] body=[{body}] icon=[{icon}]")
+        log.debug(f"Notify with title=[{title}] body=[{body}] hints=[{' '.join(f'{k}={v}' for k,v in hints.items())}]")
         if self.test:
             log.debug("TEST MODE: does not notify")
             return
 
-        n = notify2.Notification(title, body, icon)
+        n = notify2.Notification(title, body, hints.get("icon", ""))
+        for hint,set_hint in [ ("timeout", n.set_timeout),
+                               ("urgency", n.set_urgency),
+                               ("category", n.set_category) ]:
+            if (hint_val := hints.get(hint)) is not None:
+                set_hint(hint_val)
+
         n.show()
 
         log.debug(f"Notification sent [{title}], title=[{body}]")
+
 
     def start(self):
         # Initialize notify connection
@@ -130,13 +147,23 @@ class Notifier:
         fmt = DEFAULT_FORMAT | fmt
 
         log.debug(f"Using format {fmt}")
+
+        if fmt["muted"]:
+            log.debug(f"Topic [{topic}] is muted. Do not notify")
+            return
+
         rtitle = jinja2.Template(fmt["title"]).render(title=title, topic=topic, body=body)
         rbody = jinja2.Template(fmt["body"]).render(title=title, topic=topic, body=body)
-        ricon = jinja2.Template(fmt["icon"]).render(title=title, topic=topic, body=body)
 
-        self.notify(rtitle, rbody, ricon)
+        hints = {
+            "icon": jinja2.Template(fmt["icon"]).render(title=title, topic=topic, body=body),
+            "urgency": URGENCY_LEVEL[fmt["urgency"]],
+            "timeout": int(fmt["timeout"] * 1000), # convert to ms
+            "category": fmt["category"],
+        }
+
+        self.notify(rtitle, rbody, **hints)
         log.debug(f"Notification sent for topic [{topic}]")
-
 
 
 
