@@ -1,5 +1,5 @@
 [project]
-name = "mqttnotofy"
+name = "mqttnotifier"
 version = "0.1"
 description = "Forward MQTT messages to desktop notifications via D-Bus"
 readme = "README.md"
@@ -41,7 +41,7 @@ dev = [
 ]
 
 [project.scripts]
-mqtt-notify = "mqttnotify:main"
+mqttnotifier = "mqttnotifier:main"
 
 [project.urls]
 Homepage = "https://github.com/secdev/mqttnotify"
